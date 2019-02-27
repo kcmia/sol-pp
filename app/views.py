@@ -44,19 +44,21 @@ def nuevacompra():
     if request.method == 'GET':
         if len(request.values) == 0 or request.values.get('btnselected') == 'Nueva':
             return render_template('nuevacompra.html')
-        else:
-            if request.values.get('ix') != None:
-                registroseleccionado = int(request.values.get('ix'))
-                transacciones = open(ficherotransacciones, 'r')
-                csvreader = csv.reader(transacciones, delimiter=',', quotechar='"' )
-                for numreg, registro in enumerate(csvreader):
-                    if numreg == registroseleccionado:
-                        camposdict = makeDict(registro)
-                        camposdict['registroseleccionado'] = registroseleccionado
+        elif request.values.get('ix') != None:
+            registroseleccionado = int(request.values.get('ix'))
+            transacciones = open(ficherotransacciones, 'r')
+            csvreader = csv.reader(transacciones, delimiter=',', quotechar='"' )
+            for numreg, registro in enumerate(csvreader):
+                if numreg == registroseleccionado:
+                    camposdict = makeDict(registro)
+                    camposdict['registroseleccionado'] = registroseleccionado
+                    if request.values.get('btnselected') == 'Editar':
                         return render_template('modificacompra.html', registro=camposdict)
-                return 'Movimiento no encontrado'
-            else:
-                return redirect(url_for('index'))
+                    else:
+                        return render_template('confirmdelete.html', registro=camposdict)
+            return 'Movimiento no encontrado'
+        else:
+            return redirect(url_for('index'))
     else:
         datos = request.form
         transacciones = open(ficherotransacciones, "a+")
