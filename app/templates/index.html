@@ -3,8 +3,8 @@
 {% block body %}
         <h1>Criptobook</h1>
         <p>Listado de operaciones de compraventa de criptomonedas</p>
-        <form action="nuevacompra" method="get">
-            <table border="1">
+        <form class="row" action="nuevacompra" method="get">
+            <table class="twelve columns">
                 <tr>
                     <th>Sel.</th>
                     <th>Fecha</th>
@@ -28,9 +28,10 @@
                 </tr>
                 {% endfor %}
             </table>
-
-            <input name="btnselected" type="submit" class="button-primary" value="Nueva">
-            <input name="btnselected" type="submit" value="Editar">
-            <input name="btnselected" type="submit" value="Borrar">
+            <div class="row u-pull-right">
+                <input name="btnselected" type="submit" class="button-primary" value="Nueva">
+                <input name="btnselected" type="submit" value="Editar">
+                <input name="btnselected" type="submit" value="Borrar">
+            </div>
         </form>
 {% endblock %}
