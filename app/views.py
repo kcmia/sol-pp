@@ -7,6 +7,33 @@ ficherotransacciones = "data/transacciones.dat"
 nuevoficherotransacciones = 'data/newtransacciones.dat'
 fields = ['fecha', 'hora', 'descripcion', 'monedaComprada', 'cantidadComprada', 'monedaPagada', 'cantidadPagada']
 
+def deleteData(f, data):
+    pass
+
+def updateData(f, data):
+    reg = makeReg(data)
+    f.write(reg)
+
+def processData(registroseleccionado, fEncontrado):
+    transacciones = open(ficherotransacciones, 'r')
+    newtransacciones = open(nuevoficherotransacciones, 'w+')
+    
+    linea = transacciones.readline()
+    numreg = 0
+    while linea != "":
+        if numreg == registroseleccionado: 
+            fEncontrado(newtransacciones, request.form)
+        else:
+            newtransacciones.write(linea)
+        linea = transacciones.readline()
+        numreg += 1
+
+    transacciones.close()
+    newtransacciones.close()
+    os.remove(ficherotransacciones)
+    os.rename(nuevoficherotransacciones, ficherotransacciones)
+
+
 def makeDict(lista):
     diccionario = {}
     for ix, field in enumerate(fields):
@@ -85,47 +112,19 @@ def modificacompra():
 
         4. - Devolver una página que diga que todo OK
     '''
-    transacciones = open(ficherotransacciones, 'r')
-    newtransacciones = open(nuevoficherotransacciones, 'w+')
-    
     registroseleccionado = int(request.form['registroseleccionado'])
 
-    linea = transacciones.readline()
-    numreg = 0
-    while linea != "":
-        if numreg == registroseleccionado:
-            linea = makeReg(request.form)
-
-        newtransacciones.write(linea)
-        linea = transacciones.readline()
-        numreg += 1
-
-    transacciones.close()
-    newtransacciones.close()
-    os.remove(ficherotransacciones)
-    os.rename(nuevoficherotransacciones, ficherotransacciones)
+    processData(registroseleccionado, updateData)
 
     return redirect(url_for('index'))
 
 @app.route("/deletecompra", methods=['POST'])
 def deletecompra():
-    transacciones = open(ficherotransacciones, 'r')
-    newtransacciones = open(nuevoficherotransacciones, 'w+')
-    
+    if request.form.get('btnselected') == 'Cancelar':
+        return redirect(url_for('index'))
+
     registroseleccionado = int(request.form['registroseleccionado'])
-
-    linea = transacciones.readline()
-    numreg = 0
-    while linea != "":
-        if numreg != registroseleccionado:
-            newtransacciones.write(linea)
-        linea = transacciones.readline()
-        numreg += 1
-
-    transacciones.close()
-    newtransacciones.close()
-    os.remove(ficherotransacciones)
-    os.rename(nuevoficherotransacciones, ficherotransacciones)
+    processData(registroseleccionado, deleteData)
 
     return redirect(url_for('index'))
 
