@@ -1,20 +1,20 @@
 {% extends 'base.html' %}
-{% block title %} Modifica registro {% endblock %}
+{% block title %} Borra registro {% endblock %}
 {% block body %}
-<h1>Modifica registro</h1>
-    <p>Modifique los datos de la compra</p>
-    <form class="compra" action="modificacompra" method="post">
+<h1>Borrado de registro</h1>
+    <p>¿Está seguro de borrar el siguiente registro?</p>
+    <form action="deletecompra" method="post">
         <input hidden type="number" name="registroseleccionado" value="{{ registro['registroseleccionado']}}">
         <div class="row">
             <div class="three columns">Fecha: </div>
             <div class="nine columns">
-                <input class="u-full-width" type="date" name="fecha" id="fecha" value="{{ registro['fecha'] }}">
+                <input disabled class="u-full-width" type="date" name="fecha" id="fecha" value="{{ registro['fecha'] }}">
             </div>
         </div>
         <div class="row">
             <div class="three columns">Hora: </div>
             <div class="nine columns">
-                <input class="u-full-width" type="time" name="hora" id="hora" value="{{ registro['hora'] }}">
+                <input disabled class="u-full-width" type="time" name="hora" id="hora" value="{{ registro['hora'] }}">
             </div>
         </div>
         <div class="row">
@@ -22,7 +22,7 @@
                 Concepto: 
             </div>
             <div class="nine columns">
-                <input class="u-full-width" type="text" name="descripcion" id="descripcion"  value="{{ registro['descripcion'] }}">
+                <input disabled class="u-full-width" type="text" name="descripcion" id="descripcion"  value="{{ registro['descripcion'] }}"><br/>
             </div>
         </div>
         <div class="row">
@@ -30,7 +30,7 @@
                 M. Comprada: 
             </div>
             <div class="nine columns">
-                <select class="u-full-width" name="monedaComprada" id="monedaComprada"  value="{{ registro['monedaComprada'] }}">
+                <select disabled class="u-full-width" name="monedaComprada" id="monedaComprada"  value="{{ registro['monedaComprada'] }}">
                     <option value="EUR">Euro</option>
                     <option value="BTC">Bitcoin</option>
                     <option value="ETH">Ethereum</option>
@@ -43,7 +43,7 @@
                 Cantidad:
             </div>
             <div class="nine columns">
-                <input class="u-full-width" class="u-full-width" type="number" name="cantidadComprada" id="cantidadComprada" step="0.001" value="{{ registro['cantidadComprada'] }}">
+                <input disabled class="u-full-width" type="number" name="cantidadComprada" id="cantidadComprada" step="0.001" value="{{ registro['cantidadComprada'] }}"><br/>
             </div>
         </div>
         <div class="row">
@@ -51,7 +51,7 @@
                 M. Pagada:
             </div>
             <div class="nine columns">
-                <select name="monedaPagada" id="monedaPagada"  value="{{ registro['monedaPagada'] }}">
+                <select disabled class="u-full-width" name="monedaPagada" id="monedaPagada"  value="{{ registro['monedaPagada'] }}">
                     <option value="EUR">Euro</option>
                     <option value="BTC">Bitcoin</option>
                     <option value="ETH">Ethereum</option>
@@ -64,11 +64,12 @@
                 Cantidad: 
             </div>
             <div class="nine columns">
-                <input class="u-full-width" type="number" name="cantidadPagada" id="cantidadPagada" step="0.001" value="{{ registro['cantidadPagada'] }}">
+                <input disabled type="number" name="cantidadPagada" id="cantidadPagada" step="0.001" value="{{ registro['cantidadPagada'] }}"><br/>
             </div>
         </div>
         <div class="row u-pull-right">
-            <input class="button-primary" type="submit" value="Aceptar">
+            <input class="button-primary" type="submit" value="Aceptar" name="btnselected">
+            <input type="submit" value="Cancelar" name="btnselected">
         </div>
     </form>
 {% endblock %}

@@ -7,6 +7,33 @@ ficherotransacciones = "data/transacciones.dat"
 nuevoficherotransacciones = 'data/newtransacciones.dat'
 fields = ['fecha', 'hora', 'descripcion', 'monedaComprada', 'cantidadComprada', 'monedaPagada', 'cantidadPagada']
 
+def deleteData(f, data):
+    pass
+
+def updateData(f, data):
+    reg = makeReg(data)
+    f.write(reg)
+
+def processData(registroseleccionado, fEncontrado):
+    transacciones = open(ficherotransacciones, 'r')
+    newtransacciones = open(nuevoficherotransacciones, 'w+')
+    
+    linea = transacciones.readline()
+    numreg = 0
+    while linea != "":
+        if numreg == registroseleccionado: 
+            fEncontrado(newtransacciones, request.form)
+        else:
+            newtransacciones.write(linea)
+        linea = transacciones.readline()
+        numreg += 1
+
+    transacciones.close()
+    newtransacciones.close()
+    os.remove(ficherotransacciones)
+    os.rename(nuevoficherotransacciones, ficherotransacciones)
+
+
 def makeDict(lista):
     diccionario = {}
     for ix, field in enumerate(fields):
@@ -44,19 +71,21 @@ def nuevacompra():
     if request.method == 'GET':
         if len(request.values) == 0 or request.values.get('btnselected') == 'Nueva':
             return render_template('nuevacompra.html')
-        else:
-            if request.values.get('ix') != None:
-                registroseleccionado = int(request.values.get('ix'))
-                transacciones = open(ficherotransacciones, 'r')
-                csvreader = csv.reader(transacciones, delimiter=',', quotechar='"' )
-                for numreg, registro in enumerate(csvreader):
-                    if numreg == registroseleccionado:
-                        camposdict = makeDict(registro)
-                        camposdict['registroseleccionado'] = registroseleccionado
+        elif request.values.get('ix') != None:
+            registroseleccionado = int(request.values.get('ix'))
+            transacciones = open(ficherotransacciones, 'r')
+            csvreader = csv.reader(transacciones, delimiter=',', quotechar='"' )
+            for numreg, registro in enumerate(csvreader):
+                if numreg == registroseleccionado:
+                    camposdict = makeDict(registro)
+                    camposdict['registroseleccionado'] = registroseleccionado
+                    if request.values.get('btnselected') == 'Editar':
                         return render_template('modificacompra.html', registro=camposdict)
-                return 'Movimiento no encontrado'
-            else:
-                return redirect(url_for('index'))
+                    else:
+                        return render_template('confirmdelete.html', registro=camposdict)
+            return 'Movimiento no encontrado'
+        else:
+            return redirect(url_for('index'))
     else:
         datos = request.form
         transacciones = open(ficherotransacciones, "a+")
@@ -83,25 +112,19 @@ def modificacompra():
 
         4. - Devolver una página que diga que todo OK
     '''
-    transacciones = open(ficherotransacciones, 'r')
-    newtransacciones = open(nuevoficherotransacciones, 'w+')
-    
     registroseleccionado = int(request.form['registroseleccionado'])
 
-    linea = transacciones.readline()
-    numreg = 0
-    while linea != "":
-        if numreg == registroseleccionado:
-            linea = makeReg(request.form)
+    processData(registroseleccionado, updateData)
 
-        newtransacciones.write(linea)
-        linea = transacciones.readline()
-        numreg += 1
+    return redirect(url_for('index'))
 
-    transacciones.close()
-    newtransacciones.close()
-    os.remove(ficherotransacciones)
-    os.rename(nuevoficherotransacciones, ficherotransacciones)
+@app.route("/deletecompra", methods=['POST'])
+def deletecompra():
+    if request.form.get('btnselected') == 'Cancelar':
+        return redirect(url_for('index'))
+
+    registroseleccionado = int(request.form['registroseleccionado'])
+    processData(registroseleccionado, deleteData)
 
     return redirect(url_for('index'))
 
