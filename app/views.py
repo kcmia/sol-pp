@@ -107,4 +107,26 @@ def modificacompra():
 
     return redirect(url_for('index'))
 
+@app.route("/deletecompra", methods=['POST'])
+def deletecompra():
+    transacciones = open(ficherotransacciones, 'r')
+    newtransacciones = open(nuevoficherotransacciones, 'w+')
+    
+    registroseleccionado = int(request.form['registroseleccionado'])
+
+    linea = transacciones.readline()
+    numreg = 0
+    while linea != "":
+        if numreg != registroseleccionado:
+            newtransacciones.write(linea)
+        linea = transacciones.readline()
+        numreg += 1
+
+    transacciones.close()
+    newtransacciones.close()
+    os.remove(ficherotransacciones)
+    os.rename(nuevoficherotransacciones, ficherotransacciones)
+
+    return redirect(url_for('index'))
+
     
